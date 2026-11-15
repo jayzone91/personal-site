@@ -23,6 +23,7 @@ import "@fontsource-variable/space-grotesk";
 import "@fontsource/ibm-plex-mono/latin-400.css";
 import "./style.css";
 import Journey from "./Journey";
+import privacyHtml from "./content/privacy.html?raw";
 gsap.registerPlugin(ScrollTrigger);
 const projects = [
   {
@@ -167,42 +168,16 @@ function Portfolio() {
   useEffect(() => {
     if (reduced) return;
     const ctx = gsap.context(() => {
-      gsap.from(".hero-title .word", {
-        yPercent: 110,
-        stagger: 0.14,
-        duration: 1.15,
-        ease: "power4.out",
-      });
-      gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) =>
-        gsap.from(el, {
-          y: 65,
-          opacity: 0,
-          duration: 0.85,
-          scrollTrigger: { trigger: el, start: "top 90%" },
-        }),
+      gsap.utils.toArray<HTMLElement>(".reveal").forEach(
+        (el) =>
+          !el.closest(".journey") &&
+          gsap.from(el, {
+            y: 65,
+            opacity: 0,
+            duration: 0.85,
+            scrollTrigger: { trigger: el, start: "top 90%" },
+          }),
       );
-      gsap.to(".hero-title", {
-        y: -80,
-        scale: 0.75,
-        rotationX: 18,
-        opacity: 0,
-        scrollTrigger: {
-          trigger: ".hero",
-          start: "top top",
-          end: "bottom top",
-          scrub: 1,
-        },
-      });
-      gsap.to(".ticker-track", {
-        xPercent: -20,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".ticker",
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1,
-        },
-      });
     }, root);
     return () => ctx.revert();
   }, [reduced]);
@@ -280,7 +255,9 @@ function Portfolio() {
               <h2 id="enclosure-title" className="display">
                 MAL
                 <br />
-                REINSCHAUEN<span className="orange">.</span>
+                REIN
+                <br />
+                SCHAUEN<span className="orange">.</span>
               </h2>
               <p>
                 Seit meinem ersten eigenen PC will ich wissen, was
@@ -288,12 +265,7 @@ function Portfolio() {
               </p>
             </div>
           </section>
-          <div className="ticker" aria-hidden="true">
-            <div className="ticker-track">
-              SYSTEME ✱ CODE ✱ KABELSALAT ✱ NEUGIER ✱ SYSTEME ✱ CODE ✱
-              KABELSALAT ✱ NEUGIER ✱{" "}
-            </div>
-          </div>
+          <div className="immersion" aria-hidden="true" />
           <section className="about section-pad" id="mein-weg">
             <div className="section-label">
               <span>01 / MEIN WEG</span>
@@ -784,26 +756,70 @@ function Legal({ type }: { type: string }) {
         <span className="section-label">
           JOHANNES KIRCHNER / {type.toUpperCase()}
         </span>
-        <h1 className="display">
-          {type}
-          <span className="orange">.</span>
-        </h1>
+        {type !== "Datenschutz" && (
+          <h1 className="display">
+            {type}
+            <span className="orange">.</span>
+          </h1>
+        )}
         {type === "404" ? (
           <p>Dieses Paket hat sein Ziel verfehlt.</p>
-        ) : (
+        ) : type === "Impressum" ? (
           <>
-            <p className="lead">
-              Diese Seite wird vor der Veröffentlichung ergänzt.
+            <p className="lead">Angaben gemäß § 5 DDG</p>
+            <p>
+              Johannes Kirchner
+              <br />
+              Sandstr. 3<br />
+              34266 Niestetal
             </p>
             <p>
-              Der verbindliche Text für{" "}
-              {type === "Impressum"
-                ? "das Impressum"
-                : "die Datenschutzerklärung"}{" "}
-              wird vom Betreiber bereitgestellt. Dies ist ein Entwicklungsstand
-              und kein fertiger Rechtstext.
+              <strong>Vertreten durch:</strong>
+              <br />
+              Johannes Kirchner
+            </p>
+            <p>
+              <strong>Kontakt:</strong>
+              <br />
+              Telefon: Nicht vorhanden
+              <br />
+              E-Mail:{" "}
+              <a href="mailto:hi@johanneskirchner.net">
+                hi@johanneskirchner.net
+              </a>
+            </p>
+            <p>
+              <strong>
+                Verbraucherstreitbeilegung / Universalschlichtungsstelle
+              </strong>
+              <br />
+              Wir nehmen nicht an Streitbeilegungsverfahren vor einer
+              Verbraucherschlichtungsstelle teil und sind dazu auch nicht
+              verpflichtet.
+            </p>
+            <p>
+              <strong>Datenschutzerklärung</strong>
+              <br />
+              Unter dem folgenden Link finden Sie unsere{" "}
+              <Link to="/datenschutz">Datenschutzerklärung</Link>.
+            </p>
+            <p>
+              Erstellt mit{" "}
+              <a href="https://impressum-generator.de" rel="nofollow">
+                Impressum-Generator.de
+              </a>
+              . Rechtstext nach einer Vorlage der{" "}
+              <a href="https://www.kanzlei-hasselbach.de/" rel="nofollow">
+                Kanzlei Hasselbach
+              </a>
+              .
             </p>
           </>
+        ) : (
+          <article
+            className="privacy-content"
+            dangerouslySetInnerHTML={{ __html: privacyHtml }}
+          />
         )}
         <Link className="text-link" to="/">
           <ArrowLeft size={18} /> Zurück zur Werkstatt
